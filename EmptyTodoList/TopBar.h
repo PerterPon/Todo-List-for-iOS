@@ -15,9 +15,10 @@
 @end
 
 
-@interface TopBar : UIView 
+@interface TopBar : UINavigationBar
 
-@property (nonatomic) id<TopBarControl> delegate;
+@property (nonatomic) id<TopBarControl> addDlegate;
+@property (weak, nonatomic) IBOutlet UIButton *addBtn;
 
 @end
 

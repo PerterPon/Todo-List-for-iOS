@@ -12,7 +12,7 @@
 
 @end
 
-NSMutableArray *tableListData = nil;
+NSMutableArray *tableListData;
 
 @implementation MainListController
 
@@ -57,7 +57,17 @@ NSMutableArray *tableListData = nil;
 }
 
 - (void)onAddBtnClicked:(id)sender{
-    
+    NSDictionary *newRow = @{
+         @"id"      : @"0",
+         @"content" : @"",
+         @"done"    : @"n",
+         @"time"    : @""
+    };
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    NSMutableArray *newArray = [[NSMutableArray alloc] initWithArray:tableListData];
+    [newArray insertObject:newRow atIndex:0 ];
+    tableListData = newArray;
+    [_listTable insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 - (void)onSwitchChange:(id)sender {

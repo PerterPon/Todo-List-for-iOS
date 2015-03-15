@@ -10,10 +10,16 @@
 
 @implementation TopBar
 
+- (void) drawRect:(CGRect)rect {
+    CGRect screenRect  = [[UIScreen mainScreen] bounds];
+    CGRect newRect     = CGRectMake( 0.0, 20.0, screenRect.size.width, 40.0);
+    [self setFrame:newRect];
+    [self initSeparateLine:rect];
+    [self initAddBtn];
+    [super drawRect:rect];
+}
 
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
+- (void)initSeparateLine:(CGRect) rect {
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetLineCap(context, kCGLineCapSquare);
     CGContextSetLineWidth(context, 2);
@@ -24,22 +30,17 @@
     CGContextMoveToPoint(context, 0, size.height);
     CGContextAddLineToPoint(context, size.width, size.height);
     CGContextStrokePath(context);
-    [self initAddBtn];
 }
 
 - (void)initAddBtn{
-    CGRect btnRect = CGRectMake(20, 25, 20, 20);
-    UIButton *button = [[UIButton alloc] initWithFrame:btnRect];
-    [button setTitle:@"+" forState:UIControlStateNormal];
-    button.titleLabel.font = [UIFont systemFontOfSize:30.0];
-    [button setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
-    [button setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
-    [button addTarget:self action:@selector(onAddBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
-    [self addSubview:button];
+    CGRect btnRect = _addBtn.frame;
+    btnRect.size = CGSizeMake(30.0, 30.0);
+    [_addBtn setFrame:btnRect];
+    [_addBtn addTarget:self action:@selector(onAddBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)onAddBtnClicked:(id)sender {
-    [_delegate onAddBtnClicked:sender];
+    [_addDlegate onAddBtnClicked:sender];
 }
 
 @end
