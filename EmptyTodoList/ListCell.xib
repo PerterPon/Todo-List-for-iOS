@@ -13,22 +13,21 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8pe-w9-rSP">
-                        <rect key="frame" x="81" y="14" width="239" height="31"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <switch opaque="NO" alpha="0.89999999999999991" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eEK-hx-Lam">
+                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eEK-hx-Lam">
                         <rect key="frame" x="18" y="14" width="51" height="31"/>
                         <connections>
                             <action selector="onSwitchChange:" destination="KGk-i7-Jjw" eventType="valueChanged" id="eB4-IJ-SqL"/>
                         </connections>
                     </switch>
+                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ABo-tk-GKW">
+                        <rect key="frame" x="80" y="15" width="232" height="30"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <textInputTraits key="textInputTraits"/>
+                    </textField>
                 </subviews>
             </tableViewCellContentView>
             <connections>
-                <outlet property="label" destination="8pe-w9-rSP" id="kxH-G1-Fgp"/>
+                <outlet property="label" destination="ABo-tk-GKW" id="pFL-u3-ZvE"/>
                 <outlet property="switchBtn" destination="eEK-hx-Lam" id="gz5-zM-0Nc"/>
             </connections>
             <point key="canvasLocation" x="360" y="397"/>

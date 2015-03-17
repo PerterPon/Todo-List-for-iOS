@@ -16,13 +16,17 @@
 
 - (void)onLableChange:(id)sender;
 
+- (void)onBeginEditing:(UITextField *)textField;
+
+- (void)onDidAddRow:(id)sender;
+
 @end
 
-@interface ListCell : UITableViewCell
+@interface ListCell : UITableViewCell<UITextFieldDelegate>
 
 @property (strong) IBOutlet UISwitch *switchBtn;
 
-@property (strong) IBOutlet UILabel *label;
+@property (strong) IBOutlet UITextField *label;
 
 @property (nonatomic) id<CellControl> delegate;
 
