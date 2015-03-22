@@ -43,6 +43,45 @@ NSMutableArray *tableListData;
     return cell;
 }
 
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPatH{
+    return YES;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    ListCell *cell = (ListCell *)[tableView cellForRowAtIndexPath:indexPath];
+    NSInteger listId = cell.listId;
+    [tableListData removeObjectAtIndex:indexPath.row];
+    [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath, nil] withRowAnimation:UITableViewRowAnimationFade];
+    NSString *urlStr = [[NSString alloc] initWithFormat:@"http://note.perterpon.com/note/%ld", listId];
+    NSURL *url = [[NSURL alloc] initWithString:urlStr ];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    [request setURL:url];
+    [request setHTTPMethod:@"DELETE"];
+    NSOperationQueue *queue = [NSOperationQueue mainQueue];
+    [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:
+     ^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+         NSInteger responseCode = [(NSHTTPURLResponse *) response statusCode];
+         BOOL hasError = false;
+         if (200 != responseCode) {
+             hasError = true;
+         }
+         if (connectionError || true == hasError) {
+             static NSString *title   = @"提示";
+             static NSString *message = @"加载出错, 请稍后再试!";
+             static NSString *btnMsg  = @"确定";
+             UIAlertView *alert = [[ UIAlertView alloc ] initWithTitle:title message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:btnMsg, nil];
+             [alert show];
+         } else {
+             NSLog(@"删除成功");
+         }
+     }];
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *deleteBtnTitle = @"放弃";
+    return deleteBtnTitle;
+}
+
 - (void)tableView:(UITableView *)tableView willDisplayCell:(ListCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
     NSDictionary *item = tableListData[indexPath.row];
     cell.label.text = item[@"content"];
@@ -51,7 +90,6 @@ NSMutableArray *tableListData;
 }
 
 - (void)onBeginEditing:(UITextField *)textField {
-    NSLog(@"123123");
 }
 
 - (void)onRefreshTable:(id)sender {
@@ -68,9 +106,7 @@ NSMutableArray *tableListData;
          @"time"    : @""
     };
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-    NSMutableArray *newArray = [[NSMutableArray alloc] initWithArray:tableListData];
-    [newArray insertObject:newRow atIndex:0 ];
-    tableListData = newArray;
+    [tableListData insertObject:newRow atIndex:0];
     [_listTable insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     ListCell *cell = (ListCell *)[_listTable cellForRowAtIndexPath:indexPath ];
     [cell.label becomeFirstResponder];
@@ -79,7 +115,9 @@ NSMutableArray *tableListData;
 - (void)onSwitchChange:(id)sender {
     UISwitch *switchBtn = (UISwitch *)sender;
     ListCell *cell = (ListCell *)switchBtn.superview.superview;
-    NSInteger listId = cell.listId;
+    NSIndexPath *indexPath = [_listTable indexPathForCell:cell];
+    [tableListData removeObjectAtIndex:indexPath.row];
+    [_listTable deleteRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath, nil] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 - (void)onLableChange:(id)sender{
@@ -89,24 +127,22 @@ NSMutableArray *tableListData;
     NSString *httpMethod;
     NSURL *url;
     NSString *content = cell.label.text;
-    NSString *done = cell.switchBtn.isOn == YES ? @"y" : @"n";
+    NSString *done = cell.switchBtn.isOn == YES ? @"n" : @"y";
     if (0 == listId) {
         httpMethod = @"POST";
         strData = [[NSString alloc] initWithFormat:@"content=%@&done=%@", content, done];
-        url = [NSURL URLWithString:@"http://note.perterpon.com:8000/note"];
+        url = [NSURL URLWithString:@"http://note.perterpon.com/note"];
     } else {
         httpMethod = @"PUT";
-        strData = [[NSString alloc] initWithFormat:@"content=%@&done=%@&id=%ld", content, done, listId];
-        url = [NSURL URLWithString:[[NSString alloc] initWithFormat:@"http://note.perterpon.com:8000/note/%ld", listId]];
+        strData = [[NSString alloc] initWithFormat:@"content=%@&done=%@&id=%ld&close=2015-01-01", content, done, listId];
+        url = [NSURL URLWithString:[[NSString alloc] initWithFormat:@"http://note.perterpon.com/note/%ld", listId]];
     }
-    NSLog(url.path);
     NSMutableURLRequest *request = [NSMutableURLRequest new];
     [request setURL:url];
-    NSLog(@"Http method:%@", httpMethod);
     [request setHTTPMethod:httpMethod];
+    [request addValue:@"application/x-www-form-urlencoded; charset=UTF-8" forHTTPHeaderField:@"Content-Type"];
     NSData *postData = [strData dataUsingEncoding:NSUTF8StringEncoding];
     [request setHTTPBody:postData];
-    NSLog(@"http 发送数据%@", strData);
     NSOperationQueue *queue = [NSOperationQueue mainQueue];
     [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:
      ^(NSURLResponse *response, NSData *data, NSError *error){
@@ -122,6 +158,7 @@ NSMutableArray *tableListData;
              UIAlertView *alert = [[ UIAlertView alloc ] initWithTitle:title message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:btnMsg, nil];
              [alert show];
          } else {
+             [self loadData:nil];
              NSLog(@"添加成功");
          }
      }];
@@ -132,10 +169,8 @@ NSMutableArray *tableListData;
 }
 
 - (void)loadData:(UIRefreshControl *)refreshCtrl {
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"yyyy-MM-dd"];
-    NSString *today = [formatter stringFromDate:[NSDate date]];
-    NSURL *url = [NSURL URLWithString:[[NSString alloc] initWithFormat:@"http://note.perterpon.com:8000/note/%@",today]];
+    static NSString *urlStr = @"http://note.perterpon.com/note";
+    NSURL *url = [[NSURL alloc] initWithString:urlStr];
     NSMutableURLRequest *request = [NSMutableURLRequest new];
     static NSString *httpMethod = @"GET";
     [request setURL:url];
@@ -160,7 +195,7 @@ NSMutableArray *tableListData;
             } else {
                 NSError *error = nil;
                 NSMutableArray *resData = (NSMutableArray *)[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
-                tableListData = resData;
+                tableListData = [resData mutableCopy];
                 [_listTable reloadData];
             }
         }];

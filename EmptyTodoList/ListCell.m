@@ -32,9 +32,9 @@ static CGFloat ANAMITE_DURATION = 0.2;
 }
 
 - (void)onFinishedEdit:(UITextField *)textField {
-    _switchBtn.enabled = YES;
     [UIView animateWithDuration:ANAMITE_DURATION animations:^{
         _switchBtn.alpha = 1.0;
+        _switchBtn.enabled = YES;
     }];
     [textField resignFirstResponder];
     [_delegate onLableChange:textField.superview.superview];
@@ -45,7 +45,12 @@ static CGFloat ANAMITE_DURATION = 0.2;
 }
 
 - (IBAction)onSwitchChange:(id)sender {
-    UISwitch *switchBtn = (UISwitch *)sender;
+    [_delegate onSwitchChange:sender];
+    [NSTimer scheduledTimerWithTimeInterval:0.3 target:self selector:@selector(doSwitch:) userInfo:sender repeats:NO];
+}
+
+- (void)doSwitch:(NSTimer *)timer {
+    UISwitch *switchBtn = (UISwitch *)[timer userInfo];
     [_delegate onLableChange:switchBtn.superview.superview];
 }
 
