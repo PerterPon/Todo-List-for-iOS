@@ -10,6 +10,8 @@
 
 static CGFloat ANAMITE_DURATION = 0.2;
 
+CGRect editingPosition;
+
 @implementation ListCell
 
 - (void)awakeFromNib {
@@ -20,6 +22,20 @@ static CGFloat ANAMITE_DURATION = 0.2;
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
     _switchBtn.enabled = NO;
+    ListCell *cell = (ListCell *)textField.superview.superview;
+    NSIndexPath *indexPath = [_list indexPathForCell:cell];
+    CGRect cellRect = [_list rectForRowAtIndexPath:indexPath];
+    editingPosition = _list.bounds;
+
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat standHeight = screenRect.size.height - 40 - 273;
+    CGFloat cellHeight  = cellRect.origin.y + cellRect.size.height;
+    
+    if ( cellHeight > standHeight ) {
+        CGPoint point = CGPointMake(0, cellHeight - standHeight);
+        [_list setContentOffset:point animated:YES];
+    }
+
     [UIView animateWithDuration:ANAMITE_DURATION animations:^{
         _switchBtn.alpha = 0.2;
     }];
@@ -32,6 +48,7 @@ static CGFloat ANAMITE_DURATION = 0.2;
 }
 
 - (void)onFinishedEdit:(UITextField *)textField {
+    [_list setContentOffset:editingPosition.origin animated:YES];
     [UIView animateWithDuration:ANAMITE_DURATION animations:^{
         _switchBtn.alpha = 1.0;
         _switchBtn.enabled = YES;

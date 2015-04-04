@@ -16,9 +16,65 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
-    [self initBasicView];
+    [self initLockScreen];
     return YES;
+}
+
+- (void)initLockScreen{
+    UIScreen *currentScreen = [UIScreen mainScreen];
+    CGRect rect = [currentScreen bounds];
+    LockScreenViewController *lockScreen = [[LockScreenViewController alloc] initWithNibName:@"LockScreenViewController" bundle:nil];
+    self.window = [[UIWindow alloc] initWithFrame:rect];
+    _window.rootViewController = lockScreen;
+    lockScreen.lockDelegate = self;
+    [self.window makeKeyAndVisible];
+}
+
+- (void)lockScreenDone {
+    [self showTouchId];
+}
+
+- (void)onSubmitEmail {
+    [self performSelectorOnMainThread:@selector(loadBasicView) withObject:self waitUntilDone:YES];
+}
+
+- (void)showTouchId {
+    LAContext *context = [[LAContext alloc] init];
+    NSError *error = nil;
+    if([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&error]) {
+        [context evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics localizedReason:@"身份验证" reply:^(BOOL success, NSError *error) {
+            if (error){
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"验证过程中发生错误, 请退出后重试!" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+                [alert show];
+            }
+            if (success) {
+                [self performSelectorOnMainThread:@selector(loadBasicView) withObject:self waitUntilDone:YES];
+            } else {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"验证失败!" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+                [alert show];
+            }
+        }];
+    } else {
+        [self performSelectorOnMainThread:@selector(loadBasicView) withObject:self waitUntilDone:YES];
+//        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示"
+//                                                        message:@"只支持touch id身份验证"
+//                                                       delegate:nil
+//                                              cancelButtonTitle:@"确定"
+//                                              otherButtonTitles:nil];
+//        [alert show];
+    }
+}
+
+- (void)loadBasicView{
+    [UIView animateWithDuration:0.4f delay:0.3 options:UIViewAnimationOptionAllowAnimatedContent  animations:^{
+        self.window.alpha = 0.0;
+    } completion:^(BOOL finished) {
+        [self initBasicView];
+        self.window.alpha = 0.0;
+        [UIView animateWithDuration:0.4f animations:^{
+            self.window.alpha = 1;
+        }];
+    }];
 }
 
 - (void)initBasicView{
@@ -40,15 +96,19 @@
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
+    [self initLockScreen];
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
 }
 
-- (void)applicationWillEnterForeground:(UIApplication *)application {
+- (void)applicationWillEnterForeground:(UIApplication *)application
+{
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
+//        [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(showTouchId) userInfo:nil repeats:NO];
+//        [self showTouchId];
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 }
 

@@ -22,11 +22,6 @@ NSInteger TOP_BAR_HEIGHT = 60;
 - (void)initTopBar:(CGRect) rect{
     TopBar *topBar = (TopBar *)[[UINib nibWithNibName:@"TopBar" bundle:nil ] instantiateWithOwner:self options:nil][0];
     [self addSubview:topBar];
-//    TopBar *topBar = (TopBar *)[[NSBundle  mainBundle] loadNibNamed:@"TopBar" owner:self options:nil][0];
-//    CGRect topBarRect = CGRectMake(0.0, 00.0, rect.size.width, TOP_BAR_HEIGHT);
-//    TopBar *topBar = [[TopBar alloc] initWithFrame:topBarRect];
-//    [topBar setBackgroundColor:[UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0]];
-//    [self addSubview:topBar];
     topBar.addDlegate = _listTableCtrl;
 }
 

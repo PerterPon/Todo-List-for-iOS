@@ -14,9 +14,15 @@
 // An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect {
     [super drawRect:rect];
+    [self initTopicPicker];
     UIRefreshControl *refreshCtrl = [[UIRefreshControl alloc] init];
     [self addSubview:refreshCtrl];
     [refreshCtrl addTarget:self action:@selector(onRefresh:) forControlEvents:UIControlEventValueChanged];
+}
+
+- (void)initTopicPicker{
+    _topicPicker = [[UIPickerView alloc] init];
+    _topicPicker.hidden = YES;
 }
 
 - (void)onRefresh:(id)sender {

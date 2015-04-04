@@ -20,4 +20,6 @@
 
 @property (nonatomic) id<ListControl> refreshDelegate;
 
+@property (nonatomic) UIPickerView *topicPicker;
+
 @end

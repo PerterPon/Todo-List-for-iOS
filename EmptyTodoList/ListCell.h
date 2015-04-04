@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MainList.h"
 
 @protocol CellControl <NSObject>
 
@@ -31,6 +32,8 @@
 @property (nonatomic) id<CellControl> delegate;
 
 @property (nonatomic) NSInteger listId;
+
+@property (nonatomic) MainList *list;
 
 @end
 

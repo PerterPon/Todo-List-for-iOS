@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>0083BE05-C229-4B0A-BC1E-10B78B7A1621</string>
+	<key>IDESourceControlProjectName</key>
+	<string>TodoList</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>060567CE4607B48D85AC72CCACDDA6490A098722</key>
+		<string>github.com:PerterPon/Todo-List-for-iOS.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>TodoList.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>060567CE4607B48D85AC72CCACDDA6490A098722</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>github.com:PerterPon/Todo-List-for-iOS.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>060567CE4607B48D85AC72CCACDDA6490A098722</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>060567CE4607B48D85AC72CCACDDA6490A098722</string>
+			<key>IDESourceControlWCCName</key>
+			<string>EmptyTodoList</string>
+		</dict>
+	</array>
+</dict>
+</plist>

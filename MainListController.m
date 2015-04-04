@@ -39,6 +39,7 @@ NSMutableArray *tableListData;
     if (nil == cell) {
         cell = (ListCell *)[[NSBundle mainBundle] loadNibNamed:@"ListCell" owner:self options:nil][0];
         cell.delegate = self;
+        cell.list = (MainList *)tableView;
     }
     return cell;
 }
@@ -55,8 +56,13 @@ NSMutableArray *tableListData;
     NSString *urlStr = [[NSString alloc] initWithFormat:@"http://note.perterpon.com/note/%ld", listId];
     NSURL *url = [[NSURL alloc] initWithString:urlStr ];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    
+    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+    NSString *userId = [userDefault stringForKey:@"userId"];
+
     [request setURL:url];
     [request setHTTPMethod:@"DELETE"];
+    [request addValue:userId forHTTPHeaderField:@"X-USER-ID"];
     NSOperationQueue *queue = [NSOperationQueue mainQueue];
     [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:
      ^(NSURLResponse *response, NSData *data, NSError *connectionError) {
@@ -137,10 +143,15 @@ NSMutableArray *tableListData;
         strData = [[NSString alloc] initWithFormat:@"content=%@&done=%@&id=%ld&close=2015-01-01", content, done, listId];
         url = [NSURL URLWithString:[[NSString alloc] initWithFormat:@"http://note.perterpon.com/note/%ld", listId]];
     }
+    
+    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+    NSString *userId = [userDefault stringForKey:@"userId"];
+    
     NSMutableURLRequest *request = [NSMutableURLRequest new];
     [request setURL:url];
     [request setHTTPMethod:httpMethod];
     [request addValue:@"application/x-www-form-urlencoded; charset=UTF-8" forHTTPHeaderField:@"Content-Type"];
+    [request addValue:userId forHTTPHeaderField:@"X-USER-ID"];
     NSData *postData = [strData dataUsingEncoding:NSUTF8StringEncoding];
     [request setHTTPBody:postData];
     NSOperationQueue *queue = [NSOperationQueue mainQueue];
@@ -170,11 +181,16 @@ NSMutableArray *tableListData;
 
 - (void)loadData:(UIRefreshControl *)refreshCtrl {
     static NSString *urlStr = @"http://note.perterpon.com/note";
+    
+    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+    NSString *userId = [userDefault stringForKey:@"userId"];
+
     NSURL *url = [[NSURL alloc] initWithString:urlStr];
     NSMutableURLRequest *request = [NSMutableURLRequest new];
     static NSString *httpMethod = @"GET";
     [request setURL:url];
     [request setHTTPMethod:httpMethod];
+    [request addValue:userId forHTTPHeaderField:@"X-USER-ID"];
     NSOperationQueue *queue = [NSOperationQueue mainQueue];
     [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:
         ^(NSURLResponse *response, NSData *data, NSError *error){
